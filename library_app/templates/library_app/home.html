@@ -1,0 +1,475 @@
+{% include 'library_app/heade.html' %}
+{% load permission_tags %}
+
+{% if user|has_role:'writer' %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Writers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .writer-profile, .create-book {
+            text-align: center;
+        }
+
+        .writer-profile img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .writer-profile h2, .create-book h2 {
+            margin-bottom: 20px;
+        }
+
+        .writer-profile p, .create-book p {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .book-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .book-list li {
+            margin-bottom: 20px;
+        }
+
+        .book-list li a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .book-list li a:hover {
+            color: #ccc;
+        }
+
+        .book-list::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .book-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1); /* Cor do fundo da barra de rolagem */
+            border-radius: 10px; /* Arredondar as bordas */
+        }
+
+        .book-list::-webkit-scrollbar-thumb {
+            background-color: #6a11cb; /* Cor do polegar */
+            border-radius: 10px; /* Arredondar as bordas */
+            border: 3px solid rgba(255, 255, 255, 0.3); /* Espaço ao redor do polegar */
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            text-align: left;
+        }
+
+        input, select, textarea, button {
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        input[type="file"] {
+            padding: 6px;
+            color: #000;
+            background-color: #fff;
+        }
+
+        select {
+            color: #000;
+            background-color: #fff;
+        }
+
+        option {
+            color: #000;
+            background-color: #fff;
+        }
+
+        button {
+            background-color: #2196F3;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0b7dda;
+        }
+
+        .publish, .exclude {
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            margin-left: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .publish {
+            background-color: #28a745;
+        }
+        
+        .publish:hover {
+            background-color: #218838;
+        }
+        
+        .exclude {
+            background-color: #dc3545;
+        }
+        
+        .exclude:hover {
+            background-color: #c82333;
+        }
+
+        .messages {
+            width: 50%;
+            margin: 10px auto; /* Centraliza as mensagens horizontalmente */
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .message-error {
+            background-color: #dc3545; /* Vermelho para mensagens de erro */
+        }
+        
+        .message-success {
+            background-color: #28a745; /* Verde para mensagens de sucesso */
+        }
+    </style>
+</head>
+<body>
+    <section id="writer-profile">
+        <div class="container">
+            <h2>Welcome Writer</h2>
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                <script>
+                    setTimeout(function() {
+                        var messages = document.querySelector('.messages');
+                        if (messages) {
+                            messages.style.display = 'none';
+                        }
+                    }, 3000); 
+                </script>
+            {% endif %}
+            <div class="writer-profile">
+                <img src="writer-profile.jpg" alt="Writer Profile">
+                <p>Full Name: {{ author.full_name }}</p>
+                <p>Number Books: {{ number_books }}</p>
+                <p>Country: {{ author.country }}</p>
+                <p>Username: {{writer_user.username}}</p>
+                <p>Writer Biography:</p>
+            </div>
+            <ul class="book-list">
+                <h2>Your Books:</h2>
+                {% for book in books %}
+                    <li><a href="{% url 'show_book' book.id %}">{{book.book_name}}</a>{% if book.is_published == False %}<a href="{% url 'publish_book' book.id %}" class="publish">Publish book</a>{% endif %}<a href="{% url 'exclude_book' book.id %}" class="exclude">Exclude book</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+    
+    <section id="create-book">
+        <div class="container">
+            <h2>Create New Book</h2>
+            <form class="create-book-form" method="post" action="{% url 'home' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div style="display: grid; gap: 10px;">
+                    <label for="title">Book Title</label>
+                    <input type="text" id="title" name="title" required>
+                    <label for="price">Rent Price</label>
+                    <input type="number" id="price" name="price" required>
+                    <label for="description">Book Description</label>
+                    <textarea id="description" name="description" required></textarea>
+                    <label for="genre">Book Genre</label>
+                    <select id="genre" name="genre" required>
+                        <option value="" disabled selected>Select a genre</option>
+                        <option value="science">Science</option>
+                        <option value="fiction">Fiction</option>
+                        <option value="history">History</option>
+                    </select>
+                    <label for="cover">Book Cover</label>
+                    <input type="file" id="cover" name="cover" required>
+                    <button type="submit">Create Book</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>
+</html>
+{% else %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .auth-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-links ul {
+            display: flex;
+            list-style: none;
+            margin-left: auto;
+        }
+
+        .auth-links ul li {
+            margin-left: 20px;
+        }
+
+        .auth-links ul li a {
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-links ul li a i {
+            margin-right: 8px;
+        }
+
+        #welcome, #contact {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        #welcome h2, #contact h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #welcome p, #contact p {
+            text-align: center;
+        }
+
+        #most-accessed {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        #most-accessed h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .book-list {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .book-item {
+            width: 18%;
+            text-align: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .book-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .book-item h3 {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #fff;
+        }
+
+        .book-item p {
+            font-size: 1em;
+            color: #fff;
+            margin: 10px 0;
+        }
+
+        #contact form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #contact form label {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #ddd;
+        }
+
+        #contact form input, #contact form textarea {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1em;
+        }
+
+        #contact form input:focus, #contact form textarea:focus {
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+
+        #contact form button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #0779e4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #contact form button:hover {
+            background: #055a9c;
+        }
+    </style>
+</head>
+<body>
+    <section id="welcome">
+        <div class="container">
+            <h2>Welcome to My Library</h2>
+            <p>Explore a world of knowledge and entertainment. Whether you're looking for fiction, non-fiction, or academic resources, our library has something for everyone. Join us and start your reading adventure today!</p>
+        </div>
+    </section>
+
+    <section id="most-accessed">
+        <div class="container">
+            <h2>Most Accessed Books</h2>
+            <div class="book-list">
+                {% for book in books_filter %}
+                    {% for x in book %}
+                        {% if x.is_published %}
+                            <script>
+                                function redirectToPage(idd) {
+                                    window.location.href = `/book/${idd}`;
+                                }
+                            </script>
+                            <div class="book-item" role="button" onclick="redirectToPage({{ x.id }})">
+                                <img src="/media/{{ x.images }}" alt="The Great Gatsby">
+                                <h3>{{ x.book_name }}</h3>
+                                <p>R${{ x.price_rent }}</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>Have questions or need assistance? Reach out to us!</p>
+            <form method="post" action="home">
+                {% csrf_token %}
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>
+{% endif %}
+{% include 'library_app/foote.html' %}

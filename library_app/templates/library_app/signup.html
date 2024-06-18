@@ -1,0 +1,146 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #ddd;
+        }
+
+        input, select {
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1em;
+        }
+
+        input:focus, select:focus {
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 20px;
+            background: #ff5e62;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            background: #ff2a36;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .options button {
+            padding: 10px 20px;
+            background: #fff;
+            color: #ff5e62;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1em;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .options button:hover {
+            background: #ff5e62;
+            color: #fff;
+        }
+
+        .options .selected {
+            background: #ff5e62;
+            color: #fff;
+        }
+    </style>
+    <script>
+        function selectRole(role) {
+            document.getElementById('role').value = role;
+            document.getElementById('writerButton').classList.toggle('selected', role === 'writer');
+            document.getElementById('readerButton').classList.toggle('selected', role === 'reader');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <div class="options">
+            <button id="writerButton" onclick="selectRole('writer')">Writer</button>
+            <button id="readerButton" onclick="selectRole('reader')">Reader</button>
+        </div>
+        <form method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+            <input type="hidden" id="role" name="role" value="">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="footer">
+            <p>Already have an account? <a href="/login">Log in here</a></p>
+        </div>
+    </div>
+</body>
+</html>

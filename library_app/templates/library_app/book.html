@@ -1,0 +1,241 @@
+{% include 'library_app/heade.html' %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .book-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .book-details img {
+            max-width: 300px;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .book-details h2 {
+            font-size: 2.5em;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .book-details h3 {
+            font-size: 1.5em;
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+
+        .book-details p {
+            font-size: 1em;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .price {
+            font-size: 1.5em;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            background: #0779e4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+
+        .buttons button:hover {
+            background: #055a9c;
+        }
+
+        .comments {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-top: 40px; /* Ajuste na margem superior */
+        }
+
+        .comment {
+            margin-bottom: 15px;
+        }
+
+        .comment h4 {
+            font-size: 1.2em;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .comment p {
+            font-size: 1em;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+
+        .star-rating {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .star-rating select {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            outline: none;
+            text-align-last: center;
+            text-indent: 1px;
+            text-overflow: '';
+        }
+
+        .star-rating select option {
+            background-color: #6a11cb;
+            color: #fff;
+        }
+
+        #comment_form textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            color: #ccc;
+            background: rgba(255, 255, 255, 0.2); /* Cor de fundo com transparência */
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            resize: vertical; /* Permite redimensionar verticalmente */
+        }
+
+        #comment_form textarea::placeholder {
+            color: #ccc;
+            opacity: 0.7;
+        }
+
+        #comment_form button[type="submit"] {
+            padding: 10px 20px;
+            background: #0779e4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1em;
+            transition: background 0.3s ease;
+        }
+
+        #comment_form button[type="submit"]:hover {
+            background: #055a9c;
+        }
+
+        .comment {
+            background-color: #fff;
+        }
+
+        .comment h4 {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <section class="book-details">
+        <div class="container">
+            <img src="/media/{{ book.images }}" alt="{{ book.book_name }}" onerror="this.onerror=null; this.src='/static/images/default.jpg';">
+            <h2>{{ book.book_name }}</h2>
+            <h3>Author: {{ book.owner.username }}</h3>
+            <p>Genre: {{ book.gender }}</p>
+            <p>Description: {{ book.description }}</p>
+            <div class="price">Price: R${{ book.price_rent }}</div>
+            <div class="buttons">
+                <form id="add_to_cart_form" method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" name="add_to_cart">Add to Cart</button>
+                </form>
+                <form id="add_to_shipping_form" method="POST" action=""> 
+                    {% csrf_token %}
+                    <button type="submit" name="buy_now">Buy Now</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="comments">
+        <div class="container">
+            <h2>Comments and Reviews</h2>
+            <form id="comment_form" method="POST" action="">
+                {% csrf_token %}
+                <textarea name="comment" placeholder="Write your review here..." required></textarea>
+                <div class="star-rating">
+                    <select name="rating">
+                        <option value="1" {% if avaliation.avaliation == 1 %}selected{% endif %}>★☆☆☆☆</option>
+                        <option value="2" {% if avaliation.avaliation == 2 %}selected{% endif %}>★★☆☆☆</option>
+                        <option value="3" {% if avaliation.avaliation == 3 %}selected{% endif %}>★★★☆☆</option>
+                        <option value="4" {% if avaliation.avaliation == 4 %}selected{% endif %}>★★★★☆</option>
+                        <option value="5" {% if avaliation.avaliation == 5 %}selected{% endif %}>★★★★★</option>
+                    </select>
+                </div>
+                <button type="submit" name="submit_comment">Submit Review</button>
+            </form>
+            <h1>Avaliations</h1>
+            {% for avaliationn in avaliation_book %}
+                <div class="comment">
+                    <h4>{% if avaliationn.user %} {{ avaliationn.user.username }} {% else %}Anonymous{% endif %}</h4>
+                    <h4>Stars: {{ avaliationn.avaliation }}</h4>
+                    <h4 class="pcomment">{{ avaliationn.comment }}</h4>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% include 'library_app/foote.html' %}
+</body>
+</html>

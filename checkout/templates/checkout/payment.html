@@ -1,0 +1,118 @@
+{% include 'checkout/heade.html' %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            position: relative;
+            top: 10%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50; /* Verde */
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+            width: 100%; /* Botão ocupando toda a largura */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049; /* Verde mais escuro */
+        }
+    </style>
+</head>
+<body>
+    <section id="payment-processing">
+        <div class="container">
+            <h1>Payment Processing</h1>
+            <form action="/checkout/payment/process" method="POST">
+                <label for="card_number">Card Number:</label>
+                <input type="text" id="card_number" name="card_number" placeholder="XXXX XXXX XXXX XXXX" required maxlength="19">
+
+                <label for="expiry_date">Expiry Date:</label>
+                <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required maxlength="5">
+
+                <label for="cvv">CVV:</label>
+                <input type="password" id="cvv" name="cvv" placeholder="•••" required maxlength="4">
+
+                <button type="submit">Submit Payment</button>
+            </form>
+        </div>
+    </section>
+    {% include 'checkout/foote.html' %}
+    <script>
+        // Formatando automaticamente o número do cartão
+        document.getElementById('card_number').addEventListener('input', function (e) {
+            var target = e.target;
+            var input = target.value.replace(/\D/g, '').substring(0, 16);
+            var cardNumber = input.match(/.{1,4}/g);
+            if (cardNumber !== null) {
+                target.value = cardNumber.join(' ');
+            }
+        });
+
+        // Formatando automaticamente a data de expiração
+        document.getElementById('expiry_date').addEventListener('input', function (e) {
+            var target = e.target;
+            var input = target.value.replace(/\D/g, '').substring(0, 4);
+            var expiryDate = input.match(/.{1,2}/g);
+            if (expiryDate !== null) {
+                target.value = expiryDate.join('/');
+            }
+        });
+    </script>
+</body>
+</html>
