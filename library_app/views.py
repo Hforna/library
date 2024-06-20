@@ -157,11 +157,19 @@ def books_fiction(request):
 
 def books_science(request):
     books = Book.objects.filter(gender="science")
-    return render(request, "library_app/science.html", context={"books": books})
+    paginator = Paginator(books, 4)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "library_app/science.html", context={"books": page_obj})
 
 def books_history(request):
     books = Book.objects.filter(gender="history")
-    return render(request, "library_app/history.html", context={"books": books})
+    paginator = Paginator(books, 4)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "library_app/history.html", context={"books": page_obj})
 
 def show_book(request, pk):
     book = Book.objects.get(pk=pk)
