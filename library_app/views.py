@@ -165,19 +165,29 @@ def books_fiction(request):
 
 def books_science(request):
     books = Book.objects.filter(gender="science")
-    paginator = Paginator(books, 4)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    try:
+        current_page = int(request.GET.get('page', 1))
+    except ValueError:
+        current_page = 1
+    paginator = Paginator(books, 2)
+    page_obj = paginator.get_page(current_page)
+
+    pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
     
-    return render(request, "library_app/science.html", context={"books": page_obj})
+    return render(request, "library_app/science.html", context={"books": page_obj, 'pagination_range': pagination_range})
 
 def books_history(request):
     books = Book.objects.filter(gender="history")
-    paginator = Paginator(books, 4)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    try:
+        current_page = int(request.GET.get('page', 1))
+    except ValueError:
+        current_page = 1
+    paginator = Paginator(books, 2)
+    page_obj = paginator.get_page(current_page)
 
-    return render(request, "library_app/history.html", context={"books": page_obj})
+    pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
+
+    return render(request, "library_app/history.html", context={"books": page_obj, 'pagination_range': pagination_range})
 
 def show_book(request, pk):
     book = Book.objects.get(pk=pk)
