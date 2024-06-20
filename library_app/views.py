@@ -13,6 +13,7 @@ from django.contrib.auth.models import Group, User
 from checkout.models import Cart
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -148,7 +149,11 @@ def logoutt(request):
 
 def books_fiction(request):
     books = Book.objects.filter(gender="fiction")
-    return render(request, "library_app/fiction.html", context={"books": books})
+    paginator = Paginator(books, 4)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "library_app/fiction.html", context={"books": page_obj})
 
 def books_science(request):
     books = Book.objects.filter(gender="science")

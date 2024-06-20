@@ -93,6 +93,7 @@
             justify-content: space-between;
             color: #fff; /* Ensure text color is white */
             text-decoration: none; /* Remove underline */
+            margin-bottom: 20px;
         }
 
         .category img {
@@ -116,6 +117,25 @@
             transform: scale(1.05);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
+
+        .link_page {
+            color: #055a9c;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            position: absolute;
+            top: 80%;
+        }
+        .previous_page {
+            position: absolute;
+            left: 12%;
+        }
+        .next_page {
+            position: absolute;
+            right: 12%;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +158,12 @@
                                 </a>
                         {% endif %}
                     {% endfor %}
+                    {% if books.has_previous %}
+                        <a class="link_page previous_page" href="?page={{books.previous_page_number}}">previous</a>
+                    {% endif %}
+                    {% if books.has_next %}
+                        <a class="link_page next_page"  href="?page={{books.next_page_number}}">next</a>
+                    {% endif %}
                 {% else %}
                         <h2>No books here</h2>
                 {% endif %}
