@@ -23,6 +23,8 @@
             line-height: 1.6;
             background: linear-gradient(to right, #6a11cb, #2575fc);
             color: #fff;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
@@ -34,7 +36,11 @@
             border-radius: 15px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centraliza conteúdo verticalmente */
         }
+
         .auth-links {
             display: flex;
             align-items: center;
@@ -62,6 +68,7 @@
         #categories {
             padding: 40px 0;
             flex: 1;
+            width: 100%; /* Garante largura total */
         }
 
         #categories h2 {
@@ -76,6 +83,7 @@
             justify-content: space-around;
             flex-wrap: wrap;
             gap: 20px;
+            width: 100%; /* Garante largura total */
         }
 
         .category {
@@ -91,9 +99,10 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            color: #fff; /* Ensure text color is white */
-            text-decoration: none; /* Remove underline */
+            color: #fff;
+            text-decoration: none;
             margin-bottom: 20px;
+            position: relative;
         }
 
         .category img {
@@ -119,22 +128,48 @@
         }
 
         .link_page {
-            color: #055a9c;
+            color: #fff; /* Cor dos links de página */
             text-decoration: none;
             font-size: 1.2em;
             font-weight: bold;
             margin-right: 20px;
             margin-bottom: 20px;
-            position: absolute;
-            top: 80%;
+            position: relative;
+            z-index: 1; /* Evita que sejam cobertos por outros elementos */
         }
+
+        .linkdiv_page {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px; /* Espaçamento abaixo dos livros */
+        }
+
+        .page_link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .page_link:hover {
+            text-decoration: underline;
+        }
+
         .previous_page {
-            position: absolute;
-            left: 12%;
+            position: relative;
+            left: 0;
         }
+
         .next_page {
-            position: absolute;
-            right: 12%;
+            position: relative;
+            right: 0;
+        }
+
+        @media (max-width: 768px) {
+            .category {
+                width: 100%; /* Para ajustar a largura total em telas menores */
+            }
         }
     </style>
 </head>
@@ -158,16 +193,29 @@
                                 </a>
                         {% endif %}
                     {% endfor %}
-                    {% if books.has_previous %}
-                        <a class="link_page previous_page" href="?page={{books.previous_page_number}}">previous</a>
-                    {% endif %}
-                    {% if books.has_next %}
-                        <a class="link_page next_page"  href="?page={{books.next_page_number}}">next</a>
-                    {% endif %}
                 {% else %}
-                        <h2>No books here</h2>
+                    <h2>No books here</h2>
                 {% endif %}
             </div>
+            <div class="linkdiv_page">
+                {% if pagination_range.first_page_out_of_range %}
+                    <a href="?page=1">1</a>
+                    <span>...</span>
+                {% endif %}
+                {% for page in pagination_range.pagination %}
+                    <a class="page_link" href="?page={{page}}">{{page}}</a>
+                {% endfor %}
+                {% if pagination_range.last_page_out_of_range %}
+                    <span>...</span>
+                    <a href="?page={{books.paginator.num_pages}}">{{books.paginator.num_pages}}</a>
+                {% endif %}
+            </div>
+            {% if books.has_previous %}
+                <a class="link_page previous_page" href="?page={{books.previous_page_number}}">previous</a>
+            {% endif %}
+            {% if books.has_next %}
+                <a class="link_page next_page"  href="?page={{books.next_page_number}}">next</a>
+            {% endif %}
         </div>
     </section>
     {% include 'library_app/foote.html' %}
