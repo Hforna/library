@@ -152,7 +152,7 @@
             margin-right: 10px;
         }
 
-        .page_link:hover {
+        .page_link:hover{
             text-decoration: underline;
         }
 
@@ -199,15 +199,15 @@
             </div>
             <div class="linkdiv_page">
                 {% if pagination_range.first_page_out_of_range %}
-                    <a href="?page=1">1</a>
-                    <span>...</span>
+                    <a class="page_link" href="?page=1">1</a>
+                    <span class="page_link">...</span>
                 {% endif %}
                 {% for page in pagination_range.pagination %}
                     <a class="page_link" href="?page={{page}}">{{page}}</a>
                 {% endfor %}
                 {% if pagination_range.last_page_out_of_range %}
-                    <span>...</span>
-                    <a href="?page={{books.paginator.num_pages}}">{{books.paginator.num_pages}}</a>
+                    <span class="page_link">...</span>
+                    <a class="page_link" href="?page={{books.paginator.num_pages}}">{{books.paginator.num_pages}}</a>
                 {% endif %}
             </div>
             {% if books.has_previous %}

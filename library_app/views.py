@@ -156,7 +156,7 @@ def books_fiction(request):
         current_page = int(request.GET.get('page', 1))
     except ValueError:
         current_page = 1
-    paginator = Paginator(books, 2)
+    paginator = Paginator(books, 4)
     page_obj = paginator.get_page(current_page)
 
     pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
@@ -169,7 +169,7 @@ def books_science(request):
         current_page = int(request.GET.get('page', 1))
     except ValueError:
         current_page = 1
-    paginator = Paginator(books, 2)
+    paginator = Paginator(books, 4)
     page_obj = paginator.get_page(current_page)
 
     pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
@@ -182,7 +182,7 @@ def books_history(request):
         current_page = int(request.GET.get('page', 1))
     except ValueError:
         current_page = 1
-    paginator = Paginator(books, 2)
+    paginator = Paginator(books, 4)
     page_obj = paginator.get_page(current_page)
 
     pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
