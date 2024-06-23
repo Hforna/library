@@ -75,10 +75,39 @@
     </style>
 </head>
 <body>
+    <script>
+      
+        console.log("Sanity check!");
+
+        // Get Stripe publishable key
+        fetch("/payment/")
+        .then((result) => { return result.json(); })
+        .then((data) => {
+        // Initialize Stripe.js
+        const stripe = Stripe(data.publicKey);
+
+        // new
+        // Event handler
+        document.querySelector("#submitBtn").addEventListener("click", () => {
+            // Get Checkout Session ID
+            fetch("/create-checkout-session/")
+            .then((result) => { return result.json(); })
+            .then((data) => {
+            console.log(data);
+            // Redirect to Stripe Checkout
+            return stripe.redirectToCheckout({sessionId: data.sessionId})
+            })
+            .then((res) => {
+            console.log(res);
+            });
+        });
+        });
+    </script>
     <section id="payment-processing">
         <div class="container">
             <h1>Payment Processing</h1>
-            <form action="/checkout/payment/process" method="POST">
+            <form action="" method="POST">
+                {% csrf_token %}
                 <label for="card_number">Card Number:</label>
                 <input type="text" id="card_number" name="card_number" placeholder="XXXX XXXX XXXX XXXX" required maxlength="19">
 
@@ -88,7 +117,7 @@
                 <label for="cvv">CVV:</label>
                 <input type="password" id="cvv" name="cvv" placeholder="•••" required maxlength="4">
 
-                <button type="submit">Submit Payment</button>
+                <button id="submitBtn" type="submit">Submit Payment</button>
             </form>
         </div>
     </section>

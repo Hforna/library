@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-8k)gr3-qv%vd^ipus+%4a16yb-6!u_*6dp%o!y7tlqvd)l2tn1'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -155,3 +156,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
 }
+
+STRIPE_PUBLISHABLE_KEY = "pk_test_51PTBKk01ThTiNs0Zx5IHbw3BgFE5uwnFMZEDNZs6PEYTVDWS4r9rXdoePCqpCRFJOE1JEjIpau0bbOq4x5c1BVM500XacITsPS"
+STRIPE_SECRET_KEY = "sk_test_51PTBKk01ThTiNs0Zn2yQc7cok53rBDnf93rTsOChTldx3h1WCB1eYKbIjVIsxzUJ6M8hRIJ2nuUrcgyb87WkGbSp00BhvyDoGr"
