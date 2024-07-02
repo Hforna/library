@@ -3,6 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        fetch("/checkout/config")
+        .then((result) => { return result.json(); })
+        .then((data) => {
+        // Initialize Stripe.js
+        const stripe = Stripe(data.publicKey);
+        const ob = document.getElementById("idproduct").textContent;
+
+        // new
+        // Event handler
+        document.querySelector("#submitBtn").addEventListener("click", () => {
+            // Get Checkout Session ID
+            fetch("/checkout/create-checkout-sessions/" + ob)
+            .then((result) => { return result.json(); })
+            .then((data) => {
+            console.log(data);
+            // Redirect to Stripe Checkout
+            return stripe.redirectToCheckout({sessionId: data.sessionId})
+            })
+            .then((res) => {
+            console.log(res);
+            });
+        });
+        });
+    </script>
     <title>Shipping Confirmation</title>
     <style>
         * {
@@ -111,9 +137,10 @@
                 <p><strong>Zip Code:</strong> {{ shipping.cep }}</p>
                 <a href="{% url 'new_shipping' %}" class="edit-address">Edit address</a>
             </div>
+            <span id="idproduct" style="display: none">{{ products.default_price }}</span>
             <div class="total-price">
                 <span>Total Price: R${{ total_price }}</span>
-                <button onclick="window.location.href='/checkout/payment'">Proceed to Payment</button>
+                <button id="submitBtn">Proceed to Payment</button>
             </div>
         </div>
     </section>
