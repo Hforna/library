@@ -7,5 +7,7 @@ urlpatterns = [
     path("/shipping", shipping, name="shipping"),
     path("/new_shipping", edit_shipping, name="new_shipping"),
     path("/create-checkout-sessions/<str:id>", create_session, name="create_checkout"),
-    path("/config", stripe_config)
+    path("/config", stripe_config),
+    path("/success", SuccessPayment.as_view()),
+    path("/cancelled", CancelledPayment.as_view()),
 ]

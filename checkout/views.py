@@ -17,6 +17,7 @@ from django.http import HttpResponse
 from library_project import settings
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 
 
 # Create your views here.
@@ -53,21 +54,26 @@ def shipping(request):
         carts = Cart.objects.filter(user=request.user)
         total_price = 0
         list_books = ""
+        string_names = ""
         images = []
         for cart in carts:
-            list_books += cart.book.book_name + ", "
+            list_books += cart.book.description + ", "
+            string_names += cart.book.book_name + ", "
             cart.book.price_rent *= cart.quantity
             images.append(cart.book.images)
             total_price += cart.book.price_rent
-        products = stripe.Product.create(
-            name = list_books,
-            default_price_data = {
-                "unit_amount": total_price * 100,
-                "currency": "brl",
-            },
-            images =  images,
-        )          
-        products.save()
+
+        if request.method == "GET":
+            products = stripe.Product.create(
+                name = string_names,
+                default_price_data = {
+                    "unit_amount": total_price * 100,
+                    "currency": "brl",
+                },
+                images =  images,
+                description = list_books
+            )          
+            products.save()
         return render(request, "checkout/shipping.html", context={"shipping": shipping, "total_price": total_price, 'products': products})
     except ObjectDoesNotExist:
         if request.method == "POST":
@@ -92,8 +98,8 @@ def create_session(request, id):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try:
             checkout_session = stripe.checkout.Session.create(
-                success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',
-                cancel_url=domain_url + 'cancelled/',
+                success_url=domain_url + 'checkout/success?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=domain_url + 'checkout/cancelled/',
                 payment_method_types=['card'],
                 mode='payment',
                 line_items=[
@@ -106,6 +112,13 @@ def create_session(request, id):
             return JsonResponse({'sessionId': checkout_session['id']})
         except Exception as e:
             return JsonResponse({'error': str(e)})
+        
+class SuccessPayment(TemplateView):
+    template_name = "checkout/success.html"
+
+class CancelledPayment(TemplateView):
+    template_name = "checkout/cancelled.html"
+
     
 @login_required
 def edit_shipping(request):
