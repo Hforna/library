@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from account.models import Client
-
+import time
 class Author(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default="")
     full_name = models.CharField(max_length=256)
-    birthday = models.DateField()
+    birthday = models.DateField(default="2024-12-12")
     country = models.CharField(max_length=256)
 
 

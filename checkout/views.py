@@ -19,6 +19,7 @@ from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.core.mail import send_mail
+from django.urls import reverse
 
 
 # Create your views here.
@@ -38,6 +39,9 @@ def cart(request):
         cart.quantity = quantity
         cart.save()
         return redirect("cart")
+    
+    if not carts.exists():
+        return redirect("/home")
 
     return render(request, "checkout/cart.html", context={"carts": carts, "total_price": total_price, 'quantity_options': quantity_options})
 
@@ -147,17 +151,16 @@ def stripe_webhook(request):
         for item in line_items:
             price_product = item.amount_total / 100
         
-        send_mail(message= "Congratulations, You was a successful bought",
-            subject = f"""Here is your product:
-        Price: {price_product},
+        send_mail(message = f"""Here is your product:
+        Price: {price_product}
 """,
+            subject = "Congratulations! You have successfully completed your purchase",
             from_email = settings.EMAIL_HOST_USER,
             recipient_list = [customer_email],
             fail_silently=False,
 )
 
         print(f"Payment was successful. User email: {customer_email} Price: {price_product}")
-
 
     return HttpResponse(status=200)
 

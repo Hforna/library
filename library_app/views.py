@@ -195,21 +195,34 @@ def show_book(request, pk):
     book.save()
     if "add_to_cart" in request.POST:
         if request.user.is_authenticated:
-            if Cart.objects.filter(book=book).exists():
-                user_cart = Cart.objects.filter(book=book).first()
-                user_cart.quantity += 1
-                user_cart.save()
+            if Cart.objects.filter(user=request.user.id).exists():
+                if Cart.objects.filter(user=request.user.id).filter(book=book).exists():                    
+                    user_cart = Cart.objects.filter(user=request.user.id).filter(book=book).first()
+                    user_cart.quantity += 1
+                    user_cart.save()
+                else:
+                    cart = Cart.objects.create(user=request.user, book=book, quantity=1)
+                    cart.save()
             else:
                 cart = Cart.objects.create(user=request.user, book=book, quantity=1)
                 cart.save()
             return redirect("/checkout/cart")
         else:
-            messages.error(request, "you need are logged to add to cart")
+            messages.error(request, "you need are logged to add in cart")
             return redirect("login")
     elif "buy_now" in request.POST:
         if request.user.is_authenticated:
-            cart = Cart.objects.create(user=request.user, book=book, quantity=1)
-            cart.save()
+            if Cart.objects.filter(user=request.user.id).exists():
+                if Cart.objects.filter(user=request.user.id).filter(book=book).exists():
+                    user_cart = Cart.objects.filter(user=request.user.id).filter(book=book).first()
+                    user_cart.quantity += 1
+                    user_cart.save()
+                else:
+                    cart = Cart.objects.create(user=request.user, book=book, quantity=1)
+                    cart.save()
+            else:
+                cart = Cart.objects.create(user=request.user, book=book, quantity=1)
+                cart.save()
             return redirect("/checkout/shipping")
         else:
             messages.error(request, "you need are logged to buy now")
