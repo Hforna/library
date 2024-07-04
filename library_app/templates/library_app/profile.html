@@ -161,11 +161,11 @@
             {% endif %}
             <h2>User Profile</h2>
             <div class="user-profile">
-                <form action="profile" method="post">
+                <form action="profile" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <img src="user-profile-default.jpg" alt="User Profile">
+                    <img src="media/{{author_user.images}}" alt="User Profile">
                     <p style="padding: 10px; border-radius: 5px;"><label for="profile-pic" class="profile-button">Change Profile Picture</label></p>
-                    <input type="file" id="profile-pic" style="display: none;">
+                    <input type="file" name="profile-pic" id="profile-pic" style="display: none;">
                     <p>Full Name: <input type="text" name="full_name" value="{{author_user.full_name}}" placeholder="Enter your full name" required></p>
                     <p>Country: <input type="text" name="country" value="{{author_user.country}}" placeholder="Enter your country" required></p>
                     <p>Username: <input type="text" name="username" value="{{request.user.username}}" placeholder="Enter your username" required></p>

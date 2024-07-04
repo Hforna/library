@@ -55,7 +55,7 @@ def shipping(request):
         return redirect("profile")
     
     try:
-        shipping = Shipping.objects.get(userr=request.user)
+        shipping = Shipping.objects.filter(userr=request.user).first()
         carts = Cart.objects.filter(user=request.user)
         total_price = 0
         list_books = ""

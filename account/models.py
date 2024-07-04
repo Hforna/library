@@ -13,9 +13,9 @@ class Client(models.Model):
 
 class Shipping(models.Model):
     userr = models.ForeignKey(User, on_delete=models.CASCADE, default="")
-    cep = models.CharField(max_length=12)
-    city = models.CharField(max_length=60)
-    address = models.CharField(max_length=256)
-    state = models.CharField(max_length=256)
+    cep = models.CharField(max_length=12, default="")
+    city = models.CharField(max_length=60, default="")
+    address = models.CharField(max_length=256, default="")
+    state = models.CharField(max_length=256, default="")
 
 

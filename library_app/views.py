@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import ListView
-from .models import Client, Book, Author, AvaliationsBook
+from .models import Book, Author, AvaliationsBook
+from account.models import Shipping
 from django.core.mail import send_mail
 from rolepermissions.roles import assign_role, get_user_roles
 from rolepermissions.decorators import has_role_decorator
@@ -92,18 +93,22 @@ def profile(request):
         full_name = request.POST["full_name"]
         country = request.POST["country"]
         username = request.POST["username"]
+        images = request.FILES["profile-pic"]
         
         try:
             edit_author = Author.objects.get(user_id=request.user.id)
             edit_author.full_name = full_name
             edit_author.country = country
+            edit_author.images = images
             edit_author.save()
             messages.success(request, "Profile updated")
         except ObjectDoesNotExist:
-            create_author = Author.objects.create(user_id=request.user.id, full_name=full_name, country=country)
+            create_author = Author.objects.create(user_id=request.user.id, full_name=full_name, country=country, images=images)
         user = User.objects.get(id=request.user.id)
         user.username = username
         user.save()
+
+
 
     try:
         edit_author = Author.objects.get(user_id=request.user.id)
