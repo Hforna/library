@@ -80,6 +80,9 @@
             <h1>Enter Your Address</h1>
             <form method="POST" action="">
                 {% csrf_token %}
+
+                <label for="zipCode">Zip Code:</label>
+                <input type="text" id="zipCode" name="zipCode" required>
                 
                 <label for="addressLine">Address Line :</label>
                 <input type="text" id="addressLine" name="addressLine" required>
@@ -90,9 +93,6 @@
                 <label for="state">State:</label>
                 <input type="text" id="state" name="state" required>
                 
-                <label for="zipCode">Zip Code:</label>
-                <input type="text" id="zipCode" name="zipCode" required>
-
                 <button type="submit">Submit</button>
             </form>
         </div>

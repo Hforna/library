@@ -18,6 +18,7 @@ from library_project import settings
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -98,6 +99,7 @@ def create_session(request, id):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try:
             checkout_session = stripe.checkout.Session.create(
+                client_reference_id = request.user.id,
                 success_url=domain_url + 'checkout/success?session_id={CHECKOUT_SESSION_ID}',
                 cancel_url=domain_url + 'checkout/cancelled/',
                 payment_method_types=['card'],
@@ -118,6 +120,46 @@ class SuccessPayment(TemplateView):
 
 class CancelledPayment(TemplateView):
     template_name = "checkout/cancelled.html"
+
+@csrf_exempt
+def stripe_webhook(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        return HttpResponse(status=400)
+
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        customer_email = session['customer_details']['email']
+        line_items = stripe.checkout.Session.list_line_items(session['id'], limit=100)
+
+        for item in line_items:
+            price_product = item.amount_total / 100
+        
+        send_mail(message= "Congratulations, You was a successful bought",
+            subject = f"""Here is your product:
+        Price: {price_product},
+""",
+            from_email = settings.EMAIL_HOST_USER,
+            recipient_list = [customer_email],
+            fail_silently=False,
+)
+
+        print(f"Payment was successful. User email: {customer_email} Price: {price_product}")
+
+
+    return HttpResponse(status=200)
 
     
 @login_required
