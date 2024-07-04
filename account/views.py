@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Client, Shipping
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.contrib import messages
 
 # Create your views here.
 
@@ -17,6 +18,7 @@ def account(request):
             shipping.state = state
             shipping.cep = cep
             shipping.save()
+            messages.success(request, "Shipping information updated")
             return redirect("account")
     except ObjectDoesNotExist:
         if request.method == "POST":
@@ -26,6 +28,7 @@ def account(request):
             cep = request.POST["zip_code"]
             shipping = Shipping.objects.create(userr=request.user, address=address, city=city, state=state, cep=cep)
             shipping.save()
+            messages.success(request, "Shipping information updated")
             return redirect("account")
 
 
@@ -52,7 +55,11 @@ def account(request):
             country = request.POST["country"]
             client = Client.objects.create(userr=request.user, full_name=full_name, phone=phone, birthday=birthday, country=country)
             client.save()
+            messages.success(request, "Account information updated")
             return redirect("account")
+    except ValidationError:
+        messages.error(request, "The data is invalid")
+        return redirect("account")
         
 
     return render(request, "account/account.html", context={"client": client, "shipping": shipping})
