@@ -155,8 +155,11 @@ def logoutt(request):
     logout(request)
     return redirect("/home")
 
-def books_fiction(request):
-    books = Book.objects.filter(gender="fiction")
+list_books = ["fiction", "science", "history"]
+
+for page_books in list_books:
+    exec(f"""def books_{page_books}(request):
+    books = Book.objects.filter(gender="{page_books}")
     try:
         current_page = int(request.GET.get('page', 1))
     except ValueError:
@@ -166,33 +169,8 @@ def books_fiction(request):
 
     pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
 
-    return render(request, "library_app/fiction.html", context={"books": page_obj, 'pagination_range': pagination_range})
+    return render(request, "library_app/fiction.html", context={{"books": page_obj, 'pagination_range': pagination_range}})""")
 
-def books_science(request):
-    books = Book.objects.filter(gender="science")
-    try:
-        current_page = int(request.GET.get('page', 1))
-    except ValueError:
-        current_page = 1
-    paginator = Paginator(books, 4)
-    page_obj = paginator.get_page(current_page)
-
-    pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
-    
-    return render(request, "library_app/science.html", context={"books": page_obj, 'pagination_range': pagination_range})
-
-def books_history(request):
-    books = Book.objects.filter(gender="history")
-    try:
-        current_page = int(request.GET.get('page', 1))
-    except ValueError:
-        current_page = 1
-    paginator = Paginator(books, 4)
-    page_obj = paginator.get_page(current_page)
-
-    pagination_range = make_range_pagination(current_page=current_page, qty_pages=4, page_range=paginator.page_range)
-
-    return render(request, "library_app/history.html", context={"books": page_obj, 'pagination_range': pagination_range})
 
 def show_book(request, pk):
     book = Book.objects.get(pk=pk)
