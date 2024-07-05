@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 Library Project in Django with Stripe
 
 Description
