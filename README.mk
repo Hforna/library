@@ -13,19 +13,16 @@ Email Notifications: Users receive email notifications after purchasing a book.
 Setup Instructions
 Clone the repository
 
-bash
-Copy code
+
 git clone https://github.com/your_username/library-project.git
 cd library-project
 Set up virtual environment (optional but recommended)
 
-bash
-Copy code
+
 python -m venv env
 source env/bin/activate  # On Windows use `env\Scripts\activate`
 Install dependencies
 
-Copiar código
 pip install -r requirements.txt
 Set up Stripe API keys
 
@@ -33,21 +30,17 @@ Obtain your Stripe API keys from Stripe Dashboard.
 
 Create a .env file in the root directory and add your keys:
 
-makefile
-Copiar código
+
 STRIPE_TEST_SECRET_KEY=your_test_secret_key
 STRIPE_TEST_PUBLIC_KEY=your_test_public_key
 Run migrations
 
-Copiar código
 python manage.py migrate
 Create a superuser (optional)
 
-Copiar código
 python manage.py createsuperuser
 Start the development server
 
-Copiar código
 python manage.py runserver
 Access the application
 
