@@ -29,10 +29,19 @@ cd library-project
   ```
 
 5. **Run migrations:**
+  ```
+  python3 manage.py migrate
+  ```
 
 6. **Create a superuser (optional):**
+  ```
+  python3 manage.py create_superuser
+  ```
 
 7. **Start the development server:**
+  ```
+    python3 manage.py runserver
+  ```
 
 8. **Access the application:**
 Open your web browser and go to [http://localhost:8000](http://localhost:8000) to view the application.
