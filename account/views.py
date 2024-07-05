@@ -46,7 +46,6 @@ def account(request):
             client.country = country
             client.save()
             return redirect("account")
-        return render(request, "account/account.html", context={"client": client, "shipping": shipping})
     except ObjectDoesNotExist:
         if request.method == "POST":
             full_name = request.POST["full_name"]
