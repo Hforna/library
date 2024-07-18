@@ -12,10 +12,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from django.contrib.messages import constants
+from dotenv import load_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -157,5 +159,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100
 }
 
-STRIPE_PUBLISHABLE_KEY = "pk_test_51PTBKk01ThTiNs0Zx5IHbw3BgFE5uwnFMZEDNZs6PEYTVDWS4r9rXdoePCqpCRFJOE1JEjIpau0bbOq4x5c1BVM500XacITsPS"
-STRIPE_SECRET_KEY = "sk_test_51PTBKk01ThTiNs0Zn2yQc7cok53rBDnf93rTsOChTldx3h1WCB1eYKbIjVIsxzUJ6M8hRIJ2nuUrcgyb87WkGbSp00BhvyDoGr"
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
