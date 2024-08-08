@@ -82,16 +82,16 @@
                 {% csrf_token %}
                 
                 <label for="address">Address:</label>
-                <input type="text" id="address" name="address" value={{ shipping.address }} required>
+                <input type="text" id="address" name="address" value="{{ shipping.address }}" required>
 
                 <label for="city">City:</label>
-                <input type="text" id="city" name="city"  value={{ shipping.city }} required>
+                <input type="text" id="city" name="city"  value="{{ shipping.city }}" required>
 
                 <label for="state">State:</label>
-                <input type="text" id="state" name="state" value={{ shipping.state }} required>
+                <input type="text" id="state" name="state" value="{{ shipping.state }}" required>
 
                 <label for="zipCode">Zip Code:</label>
-                <input type="text" id="zipCode" name="zipCode" value={{ shipping.cep }} required>
+                <input type="text" id="zipCode" name="zipCode" value="{{ shipping.cep }}" required>
 
                 <button type="submit">Save Address</button>
             </form>

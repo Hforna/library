@@ -49,12 +49,6 @@ def cart(request):
 def shipping(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     try:
-        client = Client.objects.get(userr=request.user)
-    except ObjectDoesNotExist:
-        messages.success(request, "Complete your profile")
-        return redirect("profile")
-    
-    try:
         shipping = Shipping.objects.filter(userr=request.user).first()
         carts = Cart.objects.filter(user=request.user)
         total_price = 0
@@ -167,20 +161,32 @@ def stripe_webhook(request):
     
 @login_required
 def edit_shipping(request):
-    shipping = Shipping.objects.get(userr=request.user)
-    if request.method == "POST":
-        address = request.POST["address"]
-        city = request.POST["city"]
-        state = request.POST["state"]
-        cep = request.POST["zipCode"]
-        shipping.address = address
-        shipping.city = city
-        shipping.state = state
-        shipping.cep = cep
-        shipping.save()
-        return redirect("shipping")
+    context = {}
+    try:
+        shipping = Shipping.objects.get(userr=request.user)
+        context["shipping"] = shipping
+        if request.method == "POST":
+            address = request.POST["address"]
+            city = request.POST["city"]
+            state = request.POST["state"]
+            cep = request.POST["zipCode"]
+            shipping.address = address
+            shipping.city = city
+            shipping.state = state
+            shipping.cep = cep
+            shipping.save()
+            return redirect("shipping")
+    except ObjectDoesNotExist:
+        if request.method == "POST":
+            address = request.POST["address"]
+            city = request.POST["city"]
+            state = request.POST["state"]
+            cep = request.POST["zipCode"]
+            messages.success(request, "Add a address")
+            Shipping.objects.create(userr=request.user, address=address, city=city, state=state, cep=cep)
+            return redirect("shipping")
     
-    return render(request, "checkout/edit_shipping.html", context={"shipping": shipping})
+    return render(request, "checkout/edit_shipping.html", context=context)
     
 @login_required
 def delete_item_cart(request, pk):
