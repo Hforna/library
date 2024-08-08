@@ -17,6 +17,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.views.generic import ListView
 from utils.pagination import make_range_pagination
+from django.core.mail import send_mail
+from library_project import settings
 
 
 # Create your views here.
@@ -83,6 +85,16 @@ def home(request):
                 number += 1
                 books_filter[number] = x
             final_book = books_filter[:len(order_list)]
+        if "send_email" in request.POST:
+            if request.user.is_authenticated:
+                name_user = request.POST["name"]
+                email_user = request.POST["email"]
+                message = request.POST["message"]
+                send_mail(f"A user recived a message, name: {name_user}", message, email_user, [settings.EMAIL_HOST_USER])
+            else:
+                messages.error(request, "You need are logged to send a message to us")
+                return redirect("/login")
+
 
 
         return render(request, "library_app/home.html", context={"books_filter": final_book})
@@ -139,10 +151,9 @@ def loginn(request):
         return redirect("/home")
 
     if request.method == "POST":
-        username = request.POST["username"]
         password = request.POST["password"]
         email = request.POST["email"]
-        user = authenticate(request, username=username, password=password, email=email)
+        user = authenticate(request, password=password, email=email)
         if user is not None:
             login(request, user)
             messages.success(request, "login success")
